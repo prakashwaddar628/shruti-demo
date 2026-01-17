@@ -1,105 +1,164 @@
 "use client";
 
 import Link from "next/link";
-import { Star } from "lucide-react";
-// 1. We import 'Variants' type here to fix the build error
+import { Star, ArrowRight, CalendarCheck } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 
-// 2. We explicitly tell TypeScript that this is a 'Variants' object
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.2 },
-  },
-};
-
-// 3. We do the same here
-const itemVariants: Variants = {
-  hidden: { y: 20, opacity: 0 },
+// Animation Variants
+const fadeInUp: Variants = {
+  hidden: { y: 60, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
   },
 };
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2, delayChildren: 0.3 },
+  },
+};
+
+// Marquee Images (A mix of wedding/event shots)
+const marqueeImages = [
+  "1519741497674-611481863552",
+  "1511285560982-1351cdeb9821",
+  "1532712938310-341d957b4473",
+  "1529636798413-087529f79c24",
+  "1515934751635-c81c6bc9a2d8",
+  "1469334031218-e382a71b716b",
+  "1606800038501-b485114749a2",
+];
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden">
-      {/* Navbar - Slides down from top */}
+      {/* Navbar - Transparent & Sticky */}
       <motion.nav
-        initial={{ y: -50, opacity: 0 }}
+        initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="p-6 flex justify-between items-center max-w-6xl mx-auto border-b border-gray-900 sticky top-0 bg-black/90 backdrop-blur-md z-50"
+        transition={{ delay: 1, duration: 0.8 }}
+        className="p-6 flex justify-between items-center max-w-7xl mx-auto fixed top-0 left-0 right-0 z-50 mix-blend-difference"
       >
         <div className="text-2xl font-bold tracking-tighter uppercase">
           Shruti<span className="text-yellow-500">Fotography</span>
         </div>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Link
-            href="https://wa.me/919999999999"
-            className="bg-white text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-          >
-            Book a Shoot
-          </Link>
-        </motion.div>
+        <Link
+          href="/book"
+          className="bg-white text-black px-6 py-3 rounded-full font-bold text-sm hover:bg-yellow-500 transition-all flex items-center gap-2"
+        >
+          <CalendarCheck size={16} /> Book Dates
+        </Link>
       </motion.nav>
 
-      {/* Hero Section - Staggered Fade Up */}
-      <motion.section
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="text-center py-32 px-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-black"
-      >
-        <motion.h1
-          variants={itemVariants}
-          className="text-5xl md:text-8xl font-extrabold mb-6 tracking-tight leading-none"
-        >
-          Capturing{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
-            Moments.
-          </span>{" "}
-          <br />
-          Creating{" "}
-          <span className="text-yellow-500 drop-shadow-[0_0_25px_rgba(234,179,8,0.4)]">
-            Memories.
-          </span>
-        </motion.h1>
-        <motion.p
-          variants={itemVariants}
-          className="text-gray-400 max-w-lg mx-auto mb-12 text-xl leading-relaxed"
-        >
-          Premium Wedding & Event Photography in Karwar. We turn your special
-          days into timeless art.
-        </motion.p>
-        <motion.div
-          variants={itemVariants}
-          className="flex gap-5 justify-center"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05, backgroundColor: "#fbbf24" }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-yellow-500 text-black px-8 py-4 rounded-full font-bold text-lg shadow-lg shadow-yellow-500/20 transition-all"
-          >
-            View Gallery
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05, borderColor: "#fff" }}
-            whileTap={{ scale: 0.95 }}
-            className="border-2 border-gray-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-900 transition-all"
-          >
-            Contact Us
-          </motion.button>
-        </motion.div>
-      </motion.section>
+      {/* Hero Section - Cinematic & Full Height */}
+      <section className="relative h-screen flex items-center justify-start px-4 md:px-20 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent z-10" />
+          <img
+            src="https://images.unsplash.com/photo-1583957461034-98d7c2783909?q=80&w=2070&auto=format&fit=crop" // A dramatic, high-quality hero shot
+            alt="Hero Background"
+            className="w-full h-full object-cover scale-105 animate-[pulse_10s_ease-in-out_infinite_alternate]" // Subtle movement
+          />
+        </div>
 
-      {/* 3D Portfolio Grid */}
-      <section className="max-w-6xl mx-auto px-4 py-20">
-        <div className="flex justify-between items-end mb-12">
-          <h2 className="text-3xl font-bold">Featured Shoots</h2>
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="relative z-20 max-w-3xl"
+        >
+          <motion.div
+            variants={fadeInUp}
+            className="flex items-center gap-2 text-yellow-500 font-bold uppercase tracking-widest mb-4"
+          >
+            <div className="h-[2px] w-10 bg-yellow-500"></div> Premium Wedding
+            Studio
+          </motion.div>
+          <motion.h1
+            variants={fadeInUp}
+            className="text-6xl md:text-8xl font-extrabold mb-8 leading-tight"
+          >
+            We Don&apos;t Just Take Photos. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500">
+              We Stop Time.
+            </span>
+          </motion.h1>
+          <motion.p
+            variants={fadeInUp}
+            className="text-gray-300 text-xl max-w-xl mb-12 leading-relaxed"
+          >
+            Karwar&apos;s most sought-after photography team. Cinematic
+            weddings, emotive portraits, and timeless storytelling.
+          </motion.p>
+          <motion.div variants={fadeInUp} className="flex gap-5">
+            <Link
+              href="/gallery"
+              className="bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-500 transition-all flex items-center gap-2 group"
+            >
+              View Portfolio{" "}
+              <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/book"
+              className="border-2 border-white/30 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-black transition-all"
+            >
+              Check Availability
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        {/* Scroll Down Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 10, 0] }}
+          transition={{ delay: 2, duration: 1.5, repeat: Infinity }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-gray-400 text-sm tracking-widest uppercase"
+        >
+          Scroll for Momentum
+        </motion.div>
+      </section>
+
+      {/* THE MOMENTUM STRIP (Infinite Marquee) */}
+      <section className="bg-yellow-500 py-4 overflow-hidden relative z-20 rotate-[-2deg] scale-110 my-20">
+        <div className="flex animate-scroll w-[200%]">
+          {/* We duplicate the list twice to create a seamless loop */}
+          {[...marqueeImages, ...marqueeImages].map((id, i) => (
+            <div
+              key={i}
+              className="w-[250px] h-[150px] mx-2 flex-shrink-0 overflow-hidden rounded-lg grayscale hover:grayscale-0 transition-all"
+            >
+              <img
+                src={`https://images.unsplash.com/photo-${id}?w=400&q=80`}
+                alt="momentum"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 3D Portfolio Grid (Kept from previous version as they liked it) */}
+      <section className="max-w-7xl mx-auto px-4 py-32 relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+          <div>
+            <h2 className="text-gray-500 uppercase tracking-widest font-bold mb-4">
+              Selected Works
+            </h2>
+            <div className="text-4xl md:text-6xl font-extrabold">
+              Our Latest <span className="text-yellow-500">Stories</span>
+            </div>
+          </div>
+          <Link
+            href="/gallery"
+            className="text-xl border-b border-yellow-500 pb-2 hover:text-yellow-500 transition-colors flex items-center gap-2"
+          >
+            See All Projects <ArrowRight size={20} />
+          </Link>
         </div>
 
         <div
@@ -107,20 +166,44 @@ export default function Home() {
           style={{ perspective: "2000px" }}
         >
           {[
-            { id: "1519741497674-611481863552", title: "Royal Wedding" },
-            { id: "1511285560982-1351cdeb9821", title: "Pre-Wedding" },
-            { id: "1532712938310-341d957b4473", title: "Candid Portrait" },
-            { id: "1529636798413-087529f79c24", title: "Haldi Ceremony" },
-            { id: "1515934751635-c81c6bc9a2d8", title: "Groom Series" },
-            { id: "1469334031218-e382a71b716b", title: "Cinematic" },
+            {
+              id: "1519741497674-611481863552",
+              title: "Aditya & Priya",
+              cat: "Royal Wedding",
+            },
+            {
+              id: "1511285560982-1351cdeb9821",
+              title: "Rahul & Sneha",
+              cat: "Pre-Wedding",
+            },
+            {
+              id: "1532712938310-341d957b4473",
+              title: "The Kapoor Family",
+              cat: "Portraits",
+            },
+            {
+              id: "1515934751635-c81c6bc9a2d8",
+              title: "Vikram Singh",
+              cat: "Groom Series",
+            },
+            {
+              id: "1606800038501-b485114749a2",
+              title: "Destination Goa",
+              cat: "Cinematic",
+            },
+            {
+              id: "1529636798413-087529f79c24",
+              title: "Haldi Vibrant",
+              cat: "Ceremony",
+            },
           ].map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 100 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ delay: i * 0.1 }}
-              className="relative group cursor-pointer rounded-2xl"
+              transition={{ delay: i * 0.1, duration: 0.8, ease: "easeOut" }}
+              className="aspect-[3/4] relative group cursor-pointer rounded-xl"
               whileHover={{
                 rotateX: 5,
                 rotateY: 5,
@@ -130,20 +213,20 @@ export default function Home() {
               }}
               style={{ transformStyle: "preserve-3d" }}
             >
-              <div className="aspect-[3/4] rounded-2xl overflow-hidden relative shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] group-hover:shadow-[0_30px_60px_-15px_rgba(234,179,8,0.3)] transition-shadow duration-500 bg-gray-900">
+              <div className="w-full h-full rounded-xl overflow-hidden relative shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] bg-gray-900">
                 <img
                   src={`https://images.unsplash.com/photo-${item.id}?w=600&q=80`}
                   alt={item.title}
-                  className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex items-end p-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 flex items-end p-8">
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <span className="text-yellow-500 font-bold tracking-widest text-sm uppercase mb-2 block">
+                      {item.cat}
+                    </span>
+                    <h3 className="text-3xl font-bold text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                       {item.title}
                     </h3>
-                    <span className="text-yellow-500 font-bold tracking-widest text-sm uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                      View Album →
-                    </span>
                   </div>
                 </div>
               </div>
@@ -152,96 +235,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 100 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="bg-[#0a0a0a] py-24 mt-10 border-t border-gray-900 relative overflow-hidden"
-      >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <div className="flex justify-center gap-1 text-yellow-500 mb-6">
-            <Star className="fill-current w-6 h-6 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
-            <Star className="fill-current w-6 h-6 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
-            <Star className="fill-current w-6 h-6 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
-            <Star className="fill-current w-6 h-6 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
-            <Star className="fill-current w-6 h-6 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
-          </div>
-          <h2 className="text-4xl font-bold mb-12 text-white">
-            Client Stories
+      {/* Booking CTA Section - The Goal */}
+      <section className="py-40 bg-yellow-500 text-black text-center relative overflow-hidden">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative z-10 max-w-4xl mx-auto px-4"
+        >
+          <h2 className="text-5xl md:text-7xl font-extrabold mb-8 leading-tight">
+            Ready to create your masterpiece?
           </h2>
-
-          <div className="grid md:grid-cols-2 gap-8 text-left">
-            <motion.div
-              whileHover={{ y: -10 }}
-              className="bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm relative shadow-xl"
-            >
-              <div className="absolute -top-4 -left-4 text-7xl text-yellow-500/20 leading-none serif">
-                "
-              </div>
-              <p className="text-gray-300 mb-8 relative z-10 text-lg italic">
-                Best photographer in Karwar! The team was so professional and
-                the candid shots came out amazing.
-              </p>
-              <div className="font-bold text-white flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full flex items-center justify-center text-lg shadow-lg">
-                  R
-                </div>
-                <div>
-                  Rajesh & Sneha{" "}
-                  <span className="block text-sm text-gray-500 font-normal">
-                    Wedding Shoot
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-            <motion.div
-              whileHover={{ y: -10 }}
-              className="bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm relative shadow-xl"
-            >
-              <div className="absolute -top-4 -left-4 text-7xl text-yellow-500/20 leading-none serif">
-                "
-              </div>
-              <p className="text-gray-300 mb-8 relative z-10 text-lg italic">
-                Shruti Fotography captured every moment perfectly. The album
-                quality is top notch.
-              </p>
-              <div className="font-bold text-white flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center text-lg shadow-lg">
-                  A
-                </div>
-                <div>
-                  Amit Naik{" "}
-                  <span className="block text-sm text-gray-500 font-normal">
-                    Event Shoot
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="mt-16 flex flex-col items-center gap-3 cursor-pointer inline-block"
+          <p className="text-xl mb-12 font-medium">
+            Our calendar fills up fast. Check availability and secure your date
+            online.
+          </p>
+          <Link
+            href="/book"
+            className="bg-black text-white text-xl px-12 py-5 rounded-full font-bold hover:scale-105 transition-transform inline-block"
           >
-            <button className="text-yellow-400 border-2 border-yellow-500/50 px-8 py-3 rounded-full text-sm font-bold hover:bg-yellow-500/20 transition-all shadow-[0_0_20px_rgba(234,179,8,0.15)]">
-              Write a Review
-            </button>
-            <p className="text-gray-500 text-xs tracking-widest uppercase">
-              Powered by Laxpra Reviews
-            </p>
-          </motion.div>
-        </div>
-      </motion.section>
+            Book Your Date Now
+          </Link>
+        </motion.div>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+      </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-900/50 py-12 text-center text-gray-500 text-sm bg-black">
+      <footer className="py-12 text-center text-gray-600 text-sm bg-black border-t border-gray-900">
         <p>© 2026 Shruti Fotography. Karwar, Karnataka.</p>
-        <p className="mt-3 opacity-60 hover:opacity-100 transition-opacity">
-          Crafted by <span className="text-yellow-500">Laxpra Labs</span>
+        <p className="mt-3 opacity-60">
+          Powered by{" "}
+          <span className="text-yellow-500">Laxpra Labs Premium</span>
         </p>
       </footer>
     </div>
