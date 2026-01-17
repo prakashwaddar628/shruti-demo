@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { supabase } from "@/lib/supabase"; // Import Supabase
 import { motion } from "framer-motion";
-import { Check, Calendar, CreditCard, ChevronLeft } from "lucide-react";
+import {
+  Check,
+  Calendar,
+  CreditCard,
+  ChevronLeft,
+  Loader2,
+} from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-// Packages Data
 const packages = [
   {
     id: "silver",
@@ -51,14 +58,43 @@ const packages = [
 export default function BookingPage() {
   const [selectedPkg, setSelectedPkg] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", phone: "", date: "" });
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  // Find the selected package details
   const currentPkg = packages.find((p) => p.id === selectedPkg);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`This will open Razorpay for ₹${currentPkg?.advance}`);
-    // We will connect Razorpay here later
+    if (!currentPkg) return;
+
+    setLoading(true);
+
+    // 1. In a real app, Razorpay opens here.
+    // 2. For this demo, we assume payment succeeded and save to DB.
+
+    try {
+      const { error } = await supabase.from("bookings").insert([
+        {
+          customer_name: formData.name,
+          customer_phone: formData.phone,
+          event_date: formData.date,
+          package_name: currentPkg.name,
+          advance_amount: currentPkg.advance,
+          status: "Paid", // In real life, this happens after Razorpay success
+        },
+      ]);
+
+      if (error) throw error;
+
+      alert("Booking Successful! Redirecting to Invoice...");
+      // Ideally redirect to a 'Success' page
+      router.push("/");
+    } catch (error) {
+      alert("Error saving booking. Please try again.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -201,27 +237,27 @@ export default function BookingPage() {
 
               <button
                 type="submit"
-                disabled={!selectedPkg}
+                disabled={!selectedPkg || loading}
                 className={`w-full py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 transition-all ${
                   selectedPkg
                     ? "bg-yellow-500 text-black hover:bg-yellow-400"
                     : "bg-gray-800 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                <CreditCard size={20} />
-                {selectedPkg
-                  ? `Pay ₹${currentPkg?.advance.toLocaleString()} Advance`
-                  : "Select a Package"}
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <CreditCard size={20} />
+                )}
+                {loading
+                  ? "Processing..."
+                  : selectedPkg
+                    ? `Pay ₹${currentPkg?.advance.toLocaleString()} Advance`
+                    : "Select a Package"}
               </button>
 
               <div className="text-center mt-4">
                 <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
-                  <svg
-                    className="w-3 h-3 text-green-500 fill-current"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
                   Secure Payment via Razorpay
                 </p>
               </div>
