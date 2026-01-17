@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Star, ArrowRight, CalendarCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Star, ArrowRight, CalendarCheck, Quote, Menu } from "lucide-react"; // Added Menu icon
 import { motion, Variants } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 // Animation Variants
 const fadeInUp: Variants = {
@@ -22,7 +24,6 @@ const staggerContainer: Variants = {
   },
 };
 
-// Marquee Images (A mix of wedding/event shots)
 const marqueeImages = [
   "1519741497674-611481863552",
   "1511285560982-1351cdeb9821",
@@ -34,18 +35,85 @@ const marqueeImages = [
 ];
 
 export default function Home() {
+  const [reviews, setReviews] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchReviews() {
+      const { data } = await supabase
+        .from("reviews")
+        .select("*")
+        .eq("approved", true)
+        .order("rating", { ascending: false })
+        .limit(3);
+
+      if (data && data.length > 0) {
+        setReviews(data);
+      } else {
+        setReviews([
+          {
+            id: 1,
+            customer_name: "Sneha & Rahul",
+            rating: 5,
+            comment:
+              "Shruti and her team were absolute magicians! They captured moments we didn't even realize were happening.",
+          },
+          {
+            id: 2,
+            customer_name: "The Kapoor Family",
+            rating: 5,
+            comment:
+              "Professional, patient with kids, and the lighting was cinematic. Highly recommended in Karwar!",
+          },
+          {
+            id: 3,
+            customer_name: "Priya M.",
+            rating: 5,
+            comment:
+              "The cinematic teaser they made for my wedding went viral on Instagram! Best decision to book Shruti Fotography.",
+          },
+        ]);
+      }
+    }
+    fetchReviews();
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden">
-      {/* Navbar - Transparent & Sticky */}
+      {/* --- UPDATED NAVBAR WITH LINKS --- */}
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1, duration: 0.8 }}
         className="p-6 flex justify-between items-center max-w-7xl mx-auto fixed top-0 left-0 right-0 z-50 mix-blend-difference"
       >
-        <div className="text-2xl font-bold tracking-tighter uppercase">
+        {/* Logo */}
+        <div className="text-2xl font-bold tracking-tighter uppercase z-50">
           Shruti<span className="text-yellow-500">Fotography</span>
         </div>
+
+        {/* Desktop Menu (Hidden on mobile) */}
+        <div className="hidden md:flex gap-8 items-center bg-black/20 backdrop-blur-md px-8 py-3 rounded-full border border-white/10">
+          <Link
+            href="/gallery"
+            className="text-sm font-bold uppercase tracking-widest hover:text-yellow-500 transition-colors"
+          >
+            Portfolio
+          </Link>
+          <Link
+            href="/frames"
+            className="text-sm font-bold uppercase tracking-widest hover:text-yellow-500 transition-colors text-yellow-500"
+          >
+            Frames Shop
+          </Link>
+          <Link
+            href="/about"
+            className="text-sm font-bold uppercase tracking-widest hover:text-yellow-500 transition-colors"
+          >
+            About & Reviews
+          </Link>
+        </div>
+
+        {/* Action Button */}
         <Link
           href="/book"
           className="bg-white text-black px-6 py-3 rounded-full font-bold text-sm hover:bg-yellow-500 transition-all flex items-center gap-2"
@@ -53,16 +121,16 @@ export default function Home() {
           <CalendarCheck size={16} /> Book Dates
         </Link>
       </motion.nav>
+      {/* ----------------------------------- */}
 
-      {/* Hero Section - Cinematic & Full Height */}
+      {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-start px-4 md:px-20 overflow-hidden">
-        {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent z-10" />
           <img
-            src="https://images.unsplash.com/photo-1583957461034-98d7c2783909?q=80&w=2070&auto=format&fit=crop" // A dramatic, high-quality hero shot
+            src="https://images.unsplash.com/photo-1583957461034-98d7c2783909?q=80&w=2070&auto=format&fit=crop"
             alt="Hero Background"
-            className="w-full h-full object-cover scale-105 animate-[pulse_10s_ease-in-out_infinite_alternate]" // Subtle movement
+            className="w-full h-full object-cover scale-105 animate-[pulse_10s_ease-in-out_infinite_alternate]"
           />
         </div>
 
@@ -104,29 +172,18 @@ export default function Home() {
               <ArrowRight className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/book"
+              href="/frames"
               className="border-2 border-white/30 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-black transition-all"
             >
-              Check Availability
+              Buy Frames
             </Link>
           </motion.div>
         </motion.div>
-
-        {/* Scroll Down Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 10, 0] }}
-          transition={{ delay: 2, duration: 1.5, repeat: Infinity }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-gray-400 text-sm tracking-widest uppercase"
-        >
-          Scroll for Momentum
-        </motion.div>
       </section>
 
-      {/* THE MOMENTUM STRIP (Infinite Marquee) */}
+      {/* MOMENTUM STRIP */}
       <section className="bg-yellow-500 py-4 overflow-hidden relative z-20 rotate-[-2deg] scale-110 my-20">
         <div className="flex animate-scroll w-[200%]">
-          {/* We duplicate the list twice to create a seamless loop */}
           {[...marqueeImages, ...marqueeImages].map((id, i) => (
             <div
               key={i}
@@ -142,8 +199,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3D Portfolio Grid (Kept from previous version as they liked it) */}
-      <section className="max-w-7xl mx-auto px-4 py-32 relative z-10">
+      {/* 3D Portfolio Grid */}
+      <section className="max-w-7xl mx-auto px-4 py-20 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
           <div>
             <h2 className="text-gray-500 uppercase tracking-widest font-bold mb-4">
@@ -235,7 +292,70 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Booking CTA Section - The Goal */}
+      {/* REVIEWS SECTION */}
+      <section className="py-24 bg-zinc-900/50 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-yellow-500 uppercase tracking-widest font-bold mb-4">
+              Testimonials
+            </h2>
+            <div className="text-4xl md:text-5xl font-extrabold text-white">
+              Client <span className="text-gray-500">Love</span>
+            </div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {reviews.map((review, i) => (
+              <motion.div
+                key={review.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2, duration: 0.6 }}
+                whileHover={{ y: -10 }}
+                className="bg-black border border-gray-800 p-8 rounded-2xl relative group"
+              >
+                <Quote className="text-yellow-500 mb-6 w-10 h-10 opacity-50 group-hover:opacity-100 transition-opacity" />
+                <p className="text-gray-300 mb-6 text-lg italic leading-relaxed">
+                  &quot;{review.comment}&quot;
+                </p>
+                <div className="flex items-center gap-4 border-t border-gray-800 pt-6">
+                  <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-black font-bold text-xl">
+                    {review.customer_name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white">
+                      {review.customer_name}
+                    </h4>
+                    <div className="flex text-yellow-500 text-xs">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <Star key={i} size={12} fill="currentColor" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              href="/about"
+              className="text-gray-500 hover:text-yellow-500 underline transition-colors"
+            >
+              Read all reviews on About Page
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Booking CTA */}
       <section className="py-40 bg-yellow-500 text-black text-center relative overflow-hidden">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
@@ -257,7 +377,6 @@ export default function Home() {
             Book Your Date Now
           </Link>
         </motion.div>
-        {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
       </section>
 
