@@ -2,18 +2,20 @@
 
 import Link from "next/link";
 import { Star } from "lucide-react";
-import { motion } from "framer-motion"; // 1. Import Motion
+// 1. We import 'Variants' type here to fix the build error
+import { motion, Variants } from "framer-motion";
 
-// Animation variants for staggering elements
-const containerVariants = {
+// 2. We explicitly tell TypeScript that this is a 'Variants' object
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.2 }, // Delay between each child animation
+    transition: { staggerChildren: 0.2 },
   },
 };
 
-const itemVariants = {
+// 3. We do the same here
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
@@ -24,7 +26,6 @@ const itemVariants = {
 
 export default function Home() {
   return (
-    // Ensure overflow-x-hidden to prevent scrollbars during 3D transforms
     <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden">
       {/* Navbar - Slides down from top */}
       <motion.nav
@@ -101,7 +102,6 @@ export default function Home() {
           <h2 className="text-3xl font-bold">Featured Shoots</h2>
         </div>
 
-        {/* Add 'perspective' to the container to enable 3D space */}
         <div
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
           style={{ perspective: "2000px" }}
@@ -114,15 +114,13 @@ export default function Home() {
             { id: "1515934751635-c81c6bc9a2d8", title: "Groom Series" },
             { id: "1469334031218-e382a71b716b", title: "Cinematic" },
           ].map((item, i) => (
-            // The 3D Card Container
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }} // Animate when scrolled into view
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ delay: i * 0.1 }} // Stagger the loading
+              transition={{ delay: i * 0.1 }}
               className="relative group cursor-pointer rounded-2xl"
-              // THE 3D HOVER EFFECT: Rotate on X and Y axes and lift up (Z)
               whileHover={{
                 rotateX: 5,
                 rotateY: 5,
@@ -130,7 +128,7 @@ export default function Home() {
                 z: 50,
                 transition: { duration: 0.4, ease: "easeOut" },
               }}
-              style={{ transformStyle: "preserve-3d" }} // Crucial for 3D rendering
+              style={{ transformStyle: "preserve-3d" }}
             >
               <div className="aspect-[3/4] rounded-2xl overflow-hidden relative shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] group-hover:shadow-[0_30px_60px_-15px_rgba(234,179,8,0.3)] transition-shadow duration-500 bg-gray-900">
                 <img
@@ -138,7 +136,6 @@ export default function Home() {
                   alt={item.title}
                   className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"
                 />
-                {/* Gradient Overlay & Text */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex items-end p-6">
                   <div>
                     <h3 className="text-xl font-bold text-white mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
@@ -155,7 +152,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section - Slide up on scroll */}
+      {/* Testimonials Section */}
       <motion.section
         initial={{ opacity: 0, y: 100 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -163,7 +160,6 @@ export default function Home() {
         transition={{ duration: 0.8 }}
         className="bg-[#0a0a0a] py-24 mt-10 border-t border-gray-900 relative overflow-hidden"
       >
-        {/* Background decorative glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
@@ -179,7 +175,6 @@ export default function Home() {
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8 text-left">
-            {/* Testimonial Card 1 */}
             <motion.div
               whileHover={{ y: -10 }}
               className="bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm relative shadow-xl"
@@ -203,7 +198,6 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
-            {/* Testimonial Card 2 */}
             <motion.div
               whileHover={{ y: -10 }}
               className="bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm relative shadow-xl"
