@@ -73,7 +73,7 @@ export default function BookingPage() {
     // 2. For this demo, we assume payment succeeded and save to DB.
 
     try {
-      const { error } = await supabase.from("bookings").insert([
+      const { data, error } = await supabase.from("bookings").insert([
         {
           customer_name: formData.name,
           customer_phone: formData.phone,
@@ -82,13 +82,15 @@ export default function BookingPage() {
           advance_amount: currentPkg.advance,
           status: "Paid", // In real life, this happens after Razorpay success
         },
-      ]);
+      ]).select().single();
 
       if (error) throw error;
 
+      if (data) {
+        router.push(`/invoice/${data.id}`);
+      }
+
       alert("Booking Successful! Redirecting to Invoice...");
-      // Ideally redirect to a 'Success' page
-      router.push("/");
     } catch (error) {
       alert("Error saving booking. Please try again.");
       console.error(error);
