@@ -1,67 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ZoomIn, ChevronLeft, Filter } from "lucide-react";
+import { X, ZoomIn, ChevronLeft } from "lucide-react";
 import Link from "next/link";
-
-// Mock Data (Later this will come from Supabase)
-const galleryItems = [
-  {
-    id: 1,
-    src: "1519741497674-611481863552",
-    category: "Wedding",
-    size: "tall",
-  },
-  {
-    id: 2,
-    src: "1511285560982-1351cdeb9821",
-    category: "Pre-Wedding",
-    size: "wide",
-  },
-  {
-    id: 3,
-    src: "1532712938310-341d957b4473",
-    category: "Portraits",
-    size: "tall",
-  },
-  {
-    id: 4,
-    src: "1529636798413-087529f79c24",
-    category: "Events",
-    size: "wide",
-  },
-  {
-    id: 5,
-    src: "1515934751635-c81c6bc9a2d8",
-    category: "Wedding",
-    size: "tall",
-  },
-  {
-    id: 6,
-    src: "1469334031218-e382a71b716b",
-    category: "Fashion",
-    size: "tall",
-  },
-  {
-    id: 7,
-    src: "1606800038501-b485114749a2",
-    category: "Cinematic",
-    size: "wide",
-  },
-  {
-    id: 8,
-    src: "1516035069371-29a1b244cc32",
-    category: "Pre-Wedding",
-    size: "wide",
-  },
-  {
-    id: 9,
-    src: "1500917293891-ef795e70e1f6",
-    category: "Events",
-    size: "tall",
-  },
-];
+import { supabase } from "@/lib/supabase"; // Ensure you have this file created
 
 const categories = [
   "All",
@@ -75,6 +18,30 @@ const categories = [
 export default function GalleryPage() {
   const [filter, setFilter] = useState("All");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // 1. State to hold Real Images from Database
+  const [galleryItems, setGalleryItems] = useState<any[]>([]);
+
+  // 2. Fetch from Supabase on Load
+  useEffect(() => {
+    async function fetchGallery() {
+      const { data } = await supabase
+        .from("gallery_images")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (data) {
+        // Map database columns to our UI structure
+        const formattedImages = data.map((img) => ({
+          id: img.id,
+          src: img.image_url, // This is the full Supabase URL
+          category: img.category,
+        }));
+        setGalleryItems(formattedImages);
+      }
+    }
+    fetchGallery();
+  }, []);
 
   // Filter Logic
   const filteredItems =
@@ -133,11 +100,13 @@ export default function GalleryPage() {
                 className="break-inside-avoid relative group cursor-pointer overflow-hidden rounded-xl bg-gray-900"
                 onClick={() => setSelectedImage(item.src)}
               >
+                {/* UPDATED IMAGE TAG: Uses direct URL, no Unsplash prefix */}
                 <img
-                  src={`https://images.unsplash.com/photo-${item.src}?w=800&q=80`}
+                  src={item.src}
                   alt={item.category}
                   className="w-full h-auto object-cover opacity-85 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
                 />
+
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <div className="bg-yellow-500 text-black p-3 rounded-full">
@@ -152,6 +121,14 @@ export default function GalleryPage() {
               </motion.div>
             ))}
           </AnimatePresence>
+
+          {/* Empty State Message */}
+          {filteredItems.length === 0 && (
+            <div className="col-span-full text-center py-20 text-gray-500">
+              No images found in this category. Upload some from the Admin
+              Panel!
+            </div>
+          )}
         </motion.div>
       </div>
 
@@ -168,11 +145,12 @@ export default function GalleryPage() {
             <button className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
               <X size={40} />
             </button>
+            {/* UPDATED LIGHTBOX IMAGE: Uses direct URL */}
             <motion.img
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              src={`https://images.unsplash.com/photo-${selectedImage}?w=1600&q=90`}
+              src={selectedImage}
               className="max-w-full max-h-[90vh] rounded-lg shadow-2xl border border-gray-800"
               onClick={(e) => e.stopPropagation()} // Prevent closing when clicking image
             />
