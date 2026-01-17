@@ -7,7 +7,7 @@ import { Printer, Download, CheckCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function InvoicePage() {
-  const { id } = useParams(); // Get the Booking ID from the URL
+  const { id } = useParams();
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +40,25 @@ export default function InvoicePage() {
 
   return (
     <div className="min-h-screen bg-gray-900 py-10 px-4 print:bg-white print:p-0">
+      {/* --- CSS TO REMOVE BROWSER HEADERS/FOOTERS --- */}
+      <style jsx global>{`
+        @media print {
+          @page {
+            margin: 0; /* This removes the Date/URL/Title at top & bottom */
+          }
+          body {
+            -webkit-print-color-adjust: exact; /* Ensures background colors print correctly */
+            margin: 0;
+            padding: 0;
+          }
+          /* We add our own margin to the content so it doesn't touch the edge */
+          .print-content {
+            margin: 20mm;
+          }
+        }
+      `}</style>
+      {/* ----------------------------------------------- */}
+
       {/* Navigation (Hidden when printing) */}
       <div className="max-w-3xl mx-auto mb-6 flex justify-between items-center print:hidden">
         <Link
@@ -57,7 +76,8 @@ export default function InvoicePage() {
       </div>
 
       {/* THE INVOICE PAPER (A4 Style) */}
-      <div className="max-w-3xl mx-auto bg-white text-black p-10 rounded-xl shadow-2xl print:shadow-none print:rounded-none">
+      {/* Added 'print-content' class for margins */}
+      <div className="print-content max-w-3xl mx-auto bg-white text-black p-10 rounded-xl shadow-2xl print:shadow-none print:rounded-none">
         {/* Header */}
         <div className="flex justify-between items-start border-b-2 border-gray-100 pb-8 mb-8">
           <div>
