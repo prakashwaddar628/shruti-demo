@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Star, ArrowRight, CalendarCheck, Quote, Menu } from "lucide-react"; // Added Menu icon
 import { motion, Variants } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import BeforeAfter from "./components/BeforeAfter";
 
 // Animation Variants
 const fadeInUp: Variants = {
@@ -354,6 +355,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <BeforeAfter />
 
       {/* Booking CTA */}
       <section className="py-40 bg-yellow-500 text-black text-center relative overflow-hidden">
