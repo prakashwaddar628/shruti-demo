@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Star, ArrowRight, CalendarCheck, Quote, Menu } from "lucide-react"; // Added Menu icon
+import { Star, ArrowRight, CalendarCheck, Quote, Menu } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import BeforeAfter from "./components/BeforeAfter";
 
-// Animation Variants
 const fadeInUp: Variants = {
   hidden: { y: 60, opacity: 0 },
   visible: {
